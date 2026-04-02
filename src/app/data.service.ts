@@ -17,6 +17,8 @@ export class DataService {
     // DEFAULT STATIC DATA - Change this array and redeploy to add new items
     private defaultData: Omit<DataItem, 'id' | 'addedAt'>[] = [
         { name: 'ajay', ispresent: true, isDefault: true },
+        { name: 'dhruvil', ispresent: true, isDefault: true },
+        { name: 'dinesh', ispresent: true, isDefault: true },
     ];
 
     constructor() {
