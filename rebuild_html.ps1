@@ -1,4 +1,5 @@
-﻿<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+$content = @'
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
 <!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
 <!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
@@ -78,7 +79,6 @@
       opacity: 0;
       transform: translateY(-10px);
     }
-
     to {
       opacity: 1;
       transform: translateY(0);
@@ -111,8 +111,7 @@
     font-size: 0.95rem;
   }
 
-  input,
-  textarea {
+  input, textarea {
     width: 100%;
     padding: 12px 15px;
     border: 2px solid #ddd;
@@ -122,8 +121,7 @@
     transition: all 0.3s ease;
   }
 
-  input:focus,
-  textarea:focus {
+  input:focus, textarea:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -327,40 +325,38 @@
 </style>
 
 <div class="container">
-  <h1>{{ title }} - Attendance System</h1>
-
+  <h1>{{ title }} - Local Storage Cache Manager</h1>
+  
   <div *ngIf="successMessage" class="alert alert-success">
     {{ successMessage }}
   </div>
 
   <div class="form-section">
-    <h2>Add New Person</h2>
+    <h2>Add New Item</h2>
     <form (ngSubmit)="addItem()">
       <div class="form-group">
-        <label for="name">Person Name:</label>
-        <input type="text" id="name" [(ngModel)]="newItemName" name="name" placeholder="Enter person name" required />
+        <label for="name">Item Name:</label>
+        <input type="text" id="name" [(ngModel)]="newItemName" name="name" placeholder="Enter item name" required />
       </div>
 
       <div class="form-group">
-        <label>
-          <input type="checkbox" [(ngModel)]="newItemIsPresent" name="ispresent" />
-          <span style="margin-left: 8px;">Mark as Present</span>
-        </label>
+        <label for="description">Item Description:</label>
+        <textarea id="description" [(ngModel)]="newItemDescription" name="description" placeholder="Enter item description" rows="4" required></textarea>
       </div>
 
-      <button type="submit" class="btn btn-primary">Add Person</button>
+      <button type="submit" class="btn btn-primary">Add Item</button>
     </form>
   </div>
 
   <div class="stats-section">
-    <h3>Total People: <span class="badge">{{ getTotalCount() }}</span></h3>
+    <h3>Total Items Stored: <span class="badge">{{ getTotalCount() }}</span></h3>
   </div>
 
   <div class="list-section">
-    <h2>Attendance List <span class="badge">{{ dataItems.length }}</span></h2>
-
+    <h2>Stored Items <span class="badge">{{ dataItems.length }}</span></h2>
+    
     <div *ngIf="dataItems.length === 0" class="empty-state">
-      <p>No people recorded yet. Add a new person to get started!</p>
+      <p>No items stored yet. Add a new item to get started!</p>
     </div>
 
     <div *ngIf="dataItems.length > 0" class="items-grid">
@@ -369,51 +365,33 @@
           <h4>{{ item.name }}</h4>
           <span class="item-id">#{{ item.id }}</span>
         </div>
-
-        <div style="margin: 12px 0; display: flex; gap: 8px; flex-wrap: wrap;">
-          <span
-            style="background-color: #28a745; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;"
-            *ngIf="item.ispresent">✓ PRESENT</span>
-          <span
-            style="background-color: #dc3545; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;"
-            *ngIf="!item.ispresent">✗ ABSENT</span>
-
-          <span
-            style="background-color: #28a745; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;"
-            *ngIf="item.isDefault">DEFAULT</span>
-          <span
-            style="background-color: #ffc107; color: #333; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;"
-            *ngIf="!item.isDefault">NEW</span>
-        </div>
-
-        <p class="item-date">Added: {{ item.addedAt }}</p>
-
-        <div style="display: flex; gap: 8px; margin-top: 12px;">
-          <button type="button" class="btn btn-warning" (click)="togglePresent(item.id)" style="flex: 1;">
-            {{ item.ispresent ? 'Mark Absent' : 'Mark Present' }}
-          </button>
-          <button type="button" class="btn btn-danger" (click)="deleteItem(item.id)">Delete</button>
-        </div>
+        <p class="item-description">{{ item.description }}</p>
+        <p class="item-date">Created: {{ item.createdAt }}</p>
+        <button type="button" class="btn btn-danger" (click)="deleteItem(item.id)">Delete</button>
       </div>
     </div>
   </div>
 
+  <div class="action-section" *ngIf="dataItems.length > 0">
+    <button type="button" class="btn btn-warning" (click)="clearAllItems()">Clear All Items</button>
+  </div>
+
   <div class="info-section">
-    <h3>How the Default Data Merge Works:</h3>
+    <h3>How This Works:</h3>
     <ul>
-      <li><strong>Default Data:</strong> Defined in the code (file: data.service.ts)</li>
-      <li><strong>Merging:</strong> When deployed, new defaults automatically merge with previously stored data</li>
-      <li><strong>Identification:</strong> Items marked "DEFAULT" (green) are from code; "NEW" (yellow) are user-added
-      </li>
-      <li><strong>Persistence:</strong> All data stored in Local Storage persists across any number of deployments</li>
-      <li><strong>Test Workflow:</strong>
+      <li>All data is stored in your browser's <strong>Local Storage</strong></li>
+      <li>Data persists across page refreshes and browser restarts</li>
+      <li>After building and deploying to server, previously added items will still be displayed</li>
+      <li>Each item has a unique ID, name, description, and timestamp</li>
+      <li><strong>Test Steps:</strong>
         <ul>
-          <li>1. Deploy v1 with default: [{{ '{' }}name: 'ajay', ispresent: true{{ '}' }}]</li>
-          <li>2. Add more people dynamically via UI</li>
-          <li>3. Edit data.service.ts to add new default: {{ '{' }}name: 'dhruvil', ispresent: false{{ '}' }}</li>
-          <li>4. Run "ng build --prod" and redeploy to server</li>
-          <li>5. Visit deployment - see original ajay + all dynamically added people + new dhruvil</li>
-          <li>6. Verify "DEFAULT" badge shows on ajay and dhruvil; "NEW" on others</li>
+          <li>1. Add some items and note them</li>
+          <li>2. Run "ng build" to create a production build</li>
+          <li>3. Deploy the build to your server</li>
+          <li>4. Visit the deployed URL and verify items are still there</li>
+          <li>5. Add more items on the server</li>
+          <li>6. Rebuild and redeploy again</li>
+          <li>7. Verify new items persist on the redeployed version</li>
         </ul>
       </li>
     </ul>
@@ -421,3 +399,7 @@
 </div>
 
 <router-outlet></router-outlet>
+'@
+
+Set-Content -Path "c:\Users\Solv-It\Desktop\Angular Reload cahce Project\Angular-Reload\src\app\app.component.html" -Value $content -Encoding UTF8
+Write-Host "File rebuilt successfully!"
